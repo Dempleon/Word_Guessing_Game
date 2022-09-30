@@ -1,0 +1,30 @@
+:root {
+    --headerBackground: rgb(8, 8, 63);
+    --boxColor: rgb(189, 165, 135);
+    --gameTextColor: black;
+}
+
+
+header {
+    background-color: var(--headerBackground);
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+#word-box {
+    background-color: var(--boxColor);
+    align-items: center;
+    color: var(--gameTextColor);
+}
+
+#game-score {
+    background-color: var(--boxColor);
+    color: var(--gameTextColor);
+}
+
+#game-timer {
+    background-color: var(--headerBackground);
+    color: white;
+    align-items: center;
+}
