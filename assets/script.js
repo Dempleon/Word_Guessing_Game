@@ -17,17 +17,83 @@ var gameScore = document.querySelector("#game-score");
 var gameTimer = document.querySelector("#game-timer")
 
 var guessWord = "javascript";
+var guessedLetters = ['_','_','_','_','_','_','_','_','_','_'];
 
-function keydownAction(event){
+// ['_','_','_','_','_','_','_','_','_','_']
+
+
+
+function keydownAction(event) {
     wordBox.textContent = event.key;
     console.log(event);
+    console.log(typeof(guessedLetters));
+    console.log(typeof(guessWord));
     if (event.keyCode <= 90 && event.keyCode >= 65) {
         console.log(event.key);
-        wordBox.textContent = event.key
+        wordBox.textContent = event.key;
+        // return event.key;
+        if (guessWord.indexOf(event.key, 0)) {
+            guessedLetters[guessWord.indexOf(event.key, 0)] = event.key;
+            console.log(guessedLetters);
+            var letterIndexs = searchString(event.key, guessWord);
+            console.log(letterIndexs);
+            replaceAt(letterIndexs, event.key, guessWord);
+        }
     }
     else {
         return;
     }
 }
 
-gameBody.addEventListener("keydown",keydownAction);
+gameBody.addEventListener("keydown", keydownAction);
+
+function gameLoop() {
+    //while the game is not finished loop through the game
+
+    //if enetered letter is contained in the guessword, then 
+    let letter = keydownAction()
+    if (guessWord.indexOf(letter, 0)) {
+        guessedLetters[guessWord.indexOf(letter, 0)] = letter;
+        console.log(guessedLetters);
+    }
+  
+
+}
+
+function searchString(letter, str) {
+    var indexs = [];
+    for(var i = 0; i < str.length; i++) {
+        if(str[i] == letter) {
+            indexs.push(i);
+        }
+    }
+    console.log(indexs);
+
+    return indexs;
+}
+
+function replaceAt(indexes, letter, str) {
+    console.log(str);
+    console.log("indexes at:" + indexes);
+    for(var i = 0; i < indexes.length; i++) {
+        str[indexes[i]] = letter;
+    }
+    console.log("our guessed letters: " + guessedLetters);
+}
+
+// console.log('test:' + searchString('a', 'javascript'));
+// gameLoop();
+
+function searchStringtest(letter, str) {
+    var indexs = [];
+    for(var i = 0; i < str.length; i++) {
+        if(str[i] === letter) {
+            indexs.push(i);
+        }
+    }
+    console.log('test: ' + indexs);
+
+    return indexs;
+}
+
+searchStringtest('a', 'javascript');
