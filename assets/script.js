@@ -25,19 +25,19 @@ var guessedLetters = ['_','_','_','_','_','_','_','_','_','_'];
 
 function keydownAction(event) {
     wordBox.textContent = event.key;
-    console.log(event);
-    console.log(typeof(guessedLetters));
-    console.log(typeof(guessWord));
+    // console.log(event);
+    // console.log(typeof(guessedLetters));
+    // console.log(typeof(guessWord));
     if (event.keyCode <= 90 && event.keyCode >= 65) {
         console.log(event.key);
         wordBox.textContent = event.key;
         // return event.key;
-        if (guessWord.indexOf(event.key, 0)) {
-            guessedLetters[guessWord.indexOf(event.key, 0)] = event.key;
-            console.log(guessedLetters);
+        if (searchString(event.key, guessWord)) {
+            // guessedLetters[guessWord.indexOf(event.key, 0)] = event.key;
+            console.log("keydownAction(): line 37. " + guessedLetters);
             var letterIndexs = searchString(event.key, guessWord);
-            console.log(letterIndexs);
-            replaceAt(letterIndexs, event.key, guessWord);
+            console.log("keydownAction(): line 39: letterIndexs: " + letterIndexs);
+            replaceAt(letterIndexs, event.key, guessedLetters);
         }
     }
     else {
@@ -60,40 +60,62 @@ function gameLoop() {
 
 }
 
+// iterates through a string str, 
+// at each index it checks to see if letter is the same the letter at the current index
+// if it is, it adds the index to an array called indexs
+// indexs is then returned.
 function searchString(letter, str) {
     var indexs = [];
-    for(var i = 0; i < str.length; i++) {
+    console.log('line: 69' + str[0]);
+    for(var i = 0; i <= str.length; i++) {
         if(str[i] == letter) {
+            console.log("line: 71 searchString(): str[" + i + '] == ' + letter);
             indexs.push(i);
         }
     }
-    console.log(indexs);
+    console.log('searchString(): found letter: ' + letter + " at: " + indexs);
 
     return indexs;
 }
 
+
+// indexes is an array which contains the indjexes for the letters matching in guessword, and the key pressed
+
+//
 function replaceAt(indexes, letter, str) {
     console.log(str);
-    console.log("indexes at:" + indexes);
+    console.log("replaceAt(): " + indexes);
+
+
+    console.log("replateAt() our guessed letters: " + guessedLetters);
+
+    //iterates through indexs replaces 
     for(var i = 0; i < indexes.length; i++) {
+
+        console.log('line 95: replaceAt(): indexes[i] = ' + indexes[i] + ' letter = ' + letter);
         str[indexes[i]] = letter;
+
+        console.log("line 98: " + str)
+        
     }
-    console.log("our guessed letters: " + guessedLetters);
+    console.log("replateAt() our guessed letters: " + guessedLetters);
 }
 
 // console.log('test:' + searchString('a', 'javascript'));
 // gameLoop();
 
-function searchStringtest(letter, str) {
-    var indexs = [];
-    for(var i = 0; i < str.length; i++) {
-        if(str[i] === letter) {
-            indexs.push(i);
-        }
-    }
-    console.log('test: ' + indexs);
 
-    return indexs;
-}
+// 
+// function searchStringtest(letter, str) {
+//     var indexs = [];
+//     for(var i = 0; i < str.length; i++) {
+//         if(str[i] === letter) {
+//             indexs.push(i);
+//         }
+//     }
+//     console.log('test: ' + indexs);
 
-searchStringtest('a', 'javascript');
+//     return indexs;
+// }
+
+// searchStringtest('a', 'javascript');
