@@ -20,8 +20,7 @@ var startButton = document.querySelector("button");
 var guessWord = "javascript";
 var guessedLetters = ['_','_','_','_','_','_','_','_','_','_'];
 
-// ['_','_','_','_','_','_','_','_','_','_']
-
+var isComplete = false;
 var gameOver = false;
 
 function keydownAction(event) {
@@ -39,6 +38,10 @@ function keydownAction(event) {
             var letterIndexs = searchString(event.key, guessWord);
             replaceAt(letterIndexs, event.key, guessedLetters);
             wordBox.textContent = guessedLetters.join(" ");
+            checkGuess();
+            if(isComplete) {
+                alert('Congratulations');
+            }
         }
         console.log(guessedLetters);
     }
@@ -87,11 +90,15 @@ function replaceAt(indexes, letter, str) {
 //gameLoop();
 
 function countDown() {
-    var timeLeft = 3;
+    var timeLeft = 7;
     var timeInterval = setInterval(function (){
         if (timeLeft > 0) {
             gameTimer.textContent = timeLeft + " seconds left";
             timeLeft--;
+            if(isComplete) {
+                gameOver = true;
+                gameTimer.textContent = 'Guessed correctly. Press button to start new game.'
+            }
         } 
         else if (timeLeft === 0) {
             gameTimer.textContent = "No time remaining. Game over";
@@ -103,4 +110,17 @@ function countDown() {
 function startGame() {
     countDown();
 
+}
+
+//function to check for empty indexs
+function checkGuess() {
+    for(var i = 0; i < guessedLetters.length; i++) {
+        if(guessedLetters[i] === '_') {
+            isComplete = false;
+        } else {
+            if(!gameOver) {
+                isComplete = true;
+            }
+        }
+    }
 }
