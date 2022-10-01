@@ -12,15 +12,34 @@ header {
     margin: 0;
 }
 
+main{
+    display: flex;
+}
+
+p {
+    padding: 10vh;
+}
+
 #word-box {
     background-color: var(--boxColor);
-    align-items: center;
+    text-align: center;
     color: var(--gameTextColor);
+    height: 30vh;
+    width: 50vw;
+    font-size: 5vh;
+    /* padding-top: 15vh; */
+    /*flex-direction: row;*/
+    display:inline-block;
+    justify-items: center;
 }
 
 #game-score {
     background-color: var(--boxColor);
     color: var(--gameTextColor);
+    width:50vw;
+    height:30vh;
+    flex-direction: row;
+    display: inline-block;
 }
 
 #game-timer {
