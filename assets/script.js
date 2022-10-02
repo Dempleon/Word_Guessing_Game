@@ -19,14 +19,15 @@ var startButton = document.querySelector("button");
 var wins = document.querySelector('#wins');
 var loses = document.querySelector('#loses');
 
-var guessWord = "javascript";
-var guessedLetters = [];
-
 var gameOver = true;
 var timeLeft = 7;
 var timeInterval;
 var localWinCount = localStorage.getItem('winCount');
 var localLoseCount = localStorage.getItem('loseCount');
+
+var words = [];
+var guessWord = "javascript";
+var guessedLetters = [];
 
 // local storage
 if(localWinCount !== null) {
@@ -169,6 +170,7 @@ function game() {
     timeInterval = setInterval(countDown, 1000);
 }
 
+// functions to update local storage stats and stats on screen
 function updateStats() {
     localStorage.setItem('loseCount', localLoseCount);
     localStorage.setItem('winCount', localWinCount);
