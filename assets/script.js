@@ -16,37 +16,61 @@ var wordBox = document.querySelector("#word-box");
 var gameScore = document.querySelector("#game-score");
 var gameTimer = document.querySelector("#game-timer");
 var startButton = document.querySelector("button");
+var wins = document.querySelector('#wins');
+var loses = document.querySelector('#loses');
 
 var guessWord = "javascript";
-var guessedLetters = ['_','_','_','_','_','_','_','_','_','_'];
+var guessedLetters = [];
 
-var isComplete = false;
-var gameOver = false;
+var gameOver = true;
 var timeLeft = 7;
-var gameInProgress = false;
+var timeInterval;
+var localWinCount = localStorage.getItem('winCount');
+var localLoseCount = localStorage.getItem('loseCount');
 
+// local storage
+if(localWinCount !== null) {
+    wins.textContent = "wins: " + localWinCount;
+} else {
+    localWinCount = 0;
+    localStorage.setItem('winCount', localWinCount);
+    wins.textContent = "wins: " + localWinCount;
+}
+
+if(localLoseCount !== null) {
+    loses.textContent = "loses: " + localLoseCount;
+} else {
+    localLoseCount = 0;
+    localStorage.setItem('loseCount', localLoseCount);
+    loses.textContent = "loses: " + localLoseCount;
+}
+
+//event listener for keydownaction
 function keydownAction(event) {
-    //wordBox.textContent = guessedLetters;
-    // console.log(event);
-    // console.log(typeof(guessedLetters));
-    // console.log(typeof(guessWord));
-    if (!gameInProgress) {
+    // check to see if game is over
+    if(gameOver) {
+        console.log('game is over')
         return;
     }
+    // if key pressed is a letter
     if (event.keyCode <= 90 && event.keyCode >= 65) {
-        // console.log(event.key);
-        // return event.key;
+        console.log(event.key);
+
+        // search guessWord if keypressed is part of it
         if (searchString(event.key, guessWord)) {
             var letterIndexs = searchString(event.key, guessWord);
             replaceAt(letterIndexs, event.key, guessedLetters);
             wordBox.textContent = guessedLetters.join(" ");
-            checkGuess();
-            if(isComplete) {
+            console.log(guessedLetters.join(' '));
+            if (checkWord()) {
                 wordBox.textContent = guessedLetters.join(" ");
+                gameOver = true;
                 clearInterval(timeInterval);
-                alert('Congratulations');
+                // alert('Congratulations');
+                localWinCount++;
+                updateStats();
             }
-            // checkGuess();
+            
         }
         // console.log(guessedLetters);
     }
@@ -56,17 +80,8 @@ function keydownAction(event) {
 }
 
 gameBody.addEventListener("keydown", keydownAction);
-startButton.addEventListener("click", startGame);
+startButton.addEventListener("click", game);
 
-function gameLoop() {
-    //while the game is not finished loop through the game
-    //if enetered letter is contained in the guessword, then 
-    let letter = keydownAction()
-    if (guessWord.indexOf(letter, 0)) {
-        guessedLetters[guessWord.indexOf(letter, 0)] = letter;
-        console.log(guessedLetters);
-    }
-}
 
 // iterates through a string str, 
 // at each index it checks to see if letter is the same the letter at the current index
@@ -74,8 +89,8 @@ function gameLoop() {
 // indexs is then returned.
 function searchString(letter, str) {
     var indexs = [];
-    for(var i = 0; i <= str.length; i++) {
-        if(str[i] == letter) {
+    for (var i = 0; i <= str.length; i++) {
+        if (str[i] == letter) {
             indexs.push(i);
         }
     }
@@ -83,103 +98,80 @@ function searchString(letter, str) {
 }
 
 
-// indexes is an array which contains the indjexes for the letters matching in guessword, and the key pressed
-
+// indexes is an array which contains the indexes for the letters matching in guessword, and the key pressed
 function replaceAt(indexes, letter, str) {
     //iterates through indexs replaces 
-    for(var i = 0; i < indexes.length; i++) {
+    for (var i = 0; i < indexes.length; i++) {
         str[indexes[i]] = letter;
-        
+
     }
 }
 
-//gameLoop();
 
 // function to start a countdown interval
 // should only start when the button is pressed
 // there should only be one countdown timer going on
-function startGame() {
-    isComplete = false;
+function reset() {
     gameOver = false;
-    gameInProgress = true;
     timeLeft = 7;
-    // clearInterval(timeInterval);
-    for (var i = 0; i < guessedLetters.length; i++) {
-        guessedLetters[i] = '_';
+    guessedLetters = [];
+    clearInterval(timeInterval);
+    for (var i = 0; i < guessWord.length; i++) {
+        guessedLetters.push('_')
     }
-    // countDown();
-    // clearInterval(timerInterval);
     wordBox.textContent = guessedLetters.join(' ');
+    updateStats();
     
-    // interval timer
-    console.log("time left: " + timeLeft);
-    const timeInterval = setInterval(timer, 1000);
 }
 
-function timer(){
-
-    if (timeLeft > 0) {
-        gameTimer.textContent = timeLeft + " seconds left";
-        timeLeft--;
-        if(isComplete) {
-            gameOver = true;
-            gameTimer.textContent = 'Guessed correctly. Press button to start new game.'
-        }
-        console.log("time left: " + timeLeft);
-    } 
-    else if (timeLeft === 0) {
-        
-        gameTimer.textContent = "No time remaining. Game over";
-        gameOver = true;
-        clearInterval(timeInterval);
-    }
-}
 
 function countDown() {
-    // var timeLeft = 7;
-    console.log("time left: " + timeLeft);
-    const timeInterval = setInterval(function (){
+    if (!gameOver) {
         if (timeLeft > 0) {
+            console.log('timeleft: ' + timeLeft);
             gameTimer.textContent = timeLeft + " seconds left";
             timeLeft--;
-            if(isComplete) {
-                gameOver = true;
-                gameTimer.textContent = 'Guessed correctly. Press button to start new game.'
-            }
-            console.log("time left: " + timeLeft);
-        } 
-        else if (timeLeft === 0) {
-            
-            gameTimer.textContent = "No time remaining. Game over";
+        } else {
+            gameTimer.textContent = "No time remaining. Game over!";
             gameOver = true;
-            clearInterval(timeInterval);
+            localLoseCount++;
+            updateStats();
         }
-
-    }, 1000);
-
+    }
 }
 
-// pressing the start button restarts/resets the game
 
 
 //function to check for empty indexs
-function checkGuess() {
-    for(var i = 0; i < guessedLetters.length; i++) {
-        if(guessedLetters[i] === '_') {
-            isComplete = false;
-        } else {
-            if(timeLeft > 0) {
-                isComplete = true;
-                // clearInterval(timeInterval);
-                // gameOver = true;
-            }
+//checkes guessed letters
+// if there is a '_' then 
+function checkWord() {
+    // iterate through the guessed letters
+    for (var i = 0; i < guessedLetters.length; i++) {
+        if (guessedLetters[i] === '_') {
+            
+            console.log('is not complete: ');
+            return false;
         }
     }
+    gameOver = true;
+    return true;
 }
 
-// game should only start after pressing the start button
-// while guessLetters is not complete
-// if we press a letter
-// if the letter is part of the word
-//      it replaces the underscore with a letter
-//      
+// when the game starts reset everything and start timer
+// I want the game timer to decrement every second
+// when I press a letter, I want the event to take place no matter where we are in the code
+function game() {
+    reset();
+    console.log(guessedLetters.join(' '));
+    gameTimer.textContent = timeLeft + " seconds left";
+
+    timeInterval = setInterval(countDown, 1000);
+}
+
+function updateStats() {
+    localStorage.setItem('loseCount', localLoseCount);
+    localStorage.setItem('winCount', localWinCount);
+    wins.textContent = "wins: " + localWinCount;
+    loses.textContent = "loses: " + localLoseCount;
+}

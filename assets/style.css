@@ -1,9 +1,12 @@
 :root {
     --headerBackground: rgb(8, 8, 63);
-    --boxColor: rgb(189, 165, 135);
+    --boxColor: white;
     --gameTextColor: black;
 }
 
+body {
+    background-color: black;
+}
 
 header {
     background-color: var(--headerBackground);
