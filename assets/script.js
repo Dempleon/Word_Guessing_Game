@@ -25,11 +25,12 @@ var timeInterval;
 var localWinCount = localStorage.getItem('winCount');
 var localLoseCount = localStorage.getItem('loseCount');
 
-var words = [];
-var guessWord = "javascript";
+var words = ['javascript', 'style', 'selector', 'array', 'method', 'function'];
+var guessWord = words[Math.floor(Math.random() * words.length)];
 var guessedLetters = [];
 
 // local storage
+// check to see if the stats exist in local storage
 if(localWinCount !== null) {
     wins.textContent = "wins: " + localWinCount;
 } else {
@@ -37,7 +38,6 @@ if(localWinCount !== null) {
     localStorage.setItem('winCount', localWinCount);
     wins.textContent = "wins: " + localWinCount;
 }
-
 if(localLoseCount !== null) {
     loses.textContent = "loses: " + localLoseCount;
 } else {
@@ -47,39 +47,49 @@ if(localLoseCount !== null) {
 }
 
 //event listener for keydownaction
+// checks to see if the word has been guessed after each key press
+// stop timer and updates stats when final letter is guessed
 function keydownAction(event) {
     // check to see if game is over
+    // when game is over, pressing a key will do nothing
     if(gameOver) {
         console.log('game is over')
         return;
     }
-    // if key pressed is a letter
+
+    // if key pressed is a letter, else just return from the function
     if (event.keyCode <= 90 && event.keyCode >= 65) {
         console.log(event.key);
 
         // search guessWord if keypressed is part of it
         if (searchString(event.key, guessWord)) {
+            // get indexes of letters matching the input
             var letterIndexs = searchString(event.key, guessWord);
+
+            // replace the '_' with letter
             replaceAt(letterIndexs, event.key, guessedLetters);
             wordBox.textContent = guessedLetters.join(" ");
-            console.log(guessedLetters.join(' '));
+            
+            // check to see if the word has been guessed correctly
+            // if word has been correctly guessed, stop timer and increment wins, update stats
             if (checkWord()) {
                 wordBox.textContent = guessedLetters.join(" ");
                 gameOver = true;
+                gameTimer.textContent = "You correctly guessed the word before the timer ran out";
                 clearInterval(timeInterval);
-                // alert('Congratulations');
+                
                 localWinCount++;
                 updateStats();
             }
             
         }
-        // console.log(guessedLetters);
     }
     else {
         return;
     }
 }
 
+// add event lister to button and
 gameBody.addEventListener("keydown", keydownAction);
 startButton.addEventListener("click", game);
 
@@ -104,28 +114,29 @@ function replaceAt(indexes, letter, str) {
     //iterates through indexs replaces 
     for (var i = 0; i < indexes.length; i++) {
         str[indexes[i]] = letter;
-
     }
 }
 
-
-// function to start a countdown interval
-// should only start when the button is pressed
-// there should only be one countdown timer going on
+// function to reset game
+// resets timeLeft, guessedLetters, clears timeInvertal
+// random word is chosen and guessed letters filled with '_'
 function reset() {
     gameOver = false;
     timeLeft = 7;
     guessedLetters = [];
+    guessWord = words[Math.floor(Math.random() * words.length)];
+    // console.log(guessWord)
     clearInterval(timeInterval);
     for (var i = 0; i < guessWord.length; i++) {
         guessedLetters.push('_')
     }
     wordBox.textContent = guessedLetters.join(' ');
     updateStats();
-    
 }
 
-
+// function to countdown gets called at the end of each time interval 1000ms
+// if timer > 0, decrement the timer
+// if timer = 0, game over increment loses
 function countDown() {
     if (!gameOver) {
         if (timeLeft > 0) {
@@ -133,7 +144,7 @@ function countDown() {
             gameTimer.textContent = timeLeft + " seconds left";
             timeLeft--;
         } else {
-            gameTimer.textContent = "No time remaining. Game over!";
+            gameTimer.textContent = "No time remaining! You lost. Game over!";
             gameOver = true;
             localLoseCount++;
             updateStats();
@@ -141,17 +152,14 @@ function countDown() {
     }
 }
 
-
-
 //function to check for empty indexs
-//checkes guessed letters
-// if there is a '_' then 
+//checks guessed letters
+// if there is a '_' then the word is incomplete return false
+// if not a single '_" then return true, game over
 function checkWord() {
     // iterate through the guessed letters
     for (var i = 0; i < guessedLetters.length; i++) {
         if (guessedLetters[i] === '_') {
-            
-            console.log('is not complete: ');
             return false;
         }
     }
@@ -160,13 +168,10 @@ function checkWord() {
 }
 
 // when the game starts reset everything and start timer
-// I want the game timer to decrement every second
-// when I press a letter, I want the event to take place no matter where we are in the code
 function game() {
     reset();
     console.log(guessedLetters.join(' '));
     gameTimer.textContent = timeLeft + " seconds left";
-
     timeInterval = setInterval(countDown, 1000);
 }
 

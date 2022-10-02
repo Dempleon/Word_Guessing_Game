@@ -46,7 +46,7 @@ p {
 }
 
 #game-timer {
-    background-color: var(--headerBackground);
-    color: white;
+    /* background-color: var(--headerBackground); */
+    color: var(--gameTextColor);
     align-items: center;
 }
