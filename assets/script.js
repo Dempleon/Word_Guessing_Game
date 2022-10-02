@@ -20,7 +20,7 @@ var wins = document.querySelector('#wins');
 var loses = document.querySelector('#loses');
 
 var gameOver = true;
-var timeLeft = 7;
+var timeLeft = 10;
 var timeInterval;
 var localWinCount = localStorage.getItem('winCount');
 var localLoseCount = localStorage.getItem('loseCount');
@@ -122,7 +122,7 @@ function replaceAt(indexes, letter, str) {
 // random word is chosen and guessed letters filled with '_'
 function reset() {
     gameOver = false;
-    timeLeft = 7;
+    timeLeft = 10;
     guessedLetters = [];
     guessWord = words[Math.floor(Math.random() * words.length)];
     // console.log(guessWord)
