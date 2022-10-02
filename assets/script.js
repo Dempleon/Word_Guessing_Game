@@ -22,17 +22,19 @@ var guessedLetters = ['_','_','_','_','_','_','_','_','_','_'];
 
 var isComplete = false;
 var gameOver = false;
+var timeLeft = 7;
+var gameInProgress = false;
 
 function keydownAction(event) {
     //wordBox.textContent = guessedLetters;
     // console.log(event);
     // console.log(typeof(guessedLetters));
     // console.log(typeof(guessWord));
-    if (gameOver) {
+    if (!gameInProgress) {
         return;
     }
     if (event.keyCode <= 90 && event.keyCode >= 65) {
-        console.log(event.key);
+        // console.log(event.key);
         // return event.key;
         if (searchString(event.key, guessWord)) {
             var letterIndexs = searchString(event.key, guessWord);
@@ -40,10 +42,13 @@ function keydownAction(event) {
             wordBox.textContent = guessedLetters.join(" ");
             checkGuess();
             if(isComplete) {
+                wordBox.textContent = guessedLetters.join(" ");
+                clearInterval(timeInterval);
                 alert('Congratulations');
             }
+            // checkGuess();
         }
-        console.log(guessedLetters);
+        // console.log(guessedLetters);
     }
     else {
         return;
@@ -52,6 +57,7 @@ function keydownAction(event) {
 
 gameBody.addEventListener("keydown", keydownAction);
 startButton.addEventListener("click", startGame);
+
 function gameLoop() {
     //while the game is not finished loop through the game
     //if enetered letter is contained in the guessword, then 
@@ -89,9 +95,50 @@ function replaceAt(indexes, letter, str) {
 
 //gameLoop();
 
+// function to start a countdown interval
+// should only start when the button is pressed
+// there should only be one countdown timer going on
+function startGame() {
+    isComplete = false;
+    gameOver = false;
+    gameInProgress = true;
+    timeLeft = 7;
+    // clearInterval(timeInterval);
+    for (var i = 0; i < guessedLetters.length; i++) {
+        guessedLetters[i] = '_';
+    }
+    // countDown();
+    // clearInterval(timerInterval);
+    wordBox.textContent = guessedLetters.join(' ');
+    
+    // interval timer
+    console.log("time left: " + timeLeft);
+    const timeInterval = setInterval(timer, 1000);
+}
+
+function timer(){
+
+    if (timeLeft > 0) {
+        gameTimer.textContent = timeLeft + " seconds left";
+        timeLeft--;
+        if(isComplete) {
+            gameOver = true;
+            gameTimer.textContent = 'Guessed correctly. Press button to start new game.'
+        }
+        console.log("time left: " + timeLeft);
+    } 
+    else if (timeLeft === 0) {
+        
+        gameTimer.textContent = "No time remaining. Game over";
+        gameOver = true;
+        clearInterval(timeInterval);
+    }
+}
+
 function countDown() {
-    var timeLeft = 7;
-    var timeInterval = setInterval(function (){
+    // var timeLeft = 7;
+    console.log("time left: " + timeLeft);
+    const timeInterval = setInterval(function (){
         if (timeLeft > 0) {
             gameTimer.textContent = timeLeft + " seconds left";
             timeLeft--;
@@ -99,18 +146,21 @@ function countDown() {
                 gameOver = true;
                 gameTimer.textContent = 'Guessed correctly. Press button to start new game.'
             }
+            console.log("time left: " + timeLeft);
         } 
         else if (timeLeft === 0) {
+            
             gameTimer.textContent = "No time remaining. Game over";
             gameOver = true;
+            clearInterval(timeInterval);
         }
+
     }, 1000);
-}
-
-function startGame() {
-    countDown();
 
 }
+
+// pressing the start button restarts/resets the game
+
 
 //function to check for empty indexs
 function checkGuess() {
@@ -118,9 +168,18 @@ function checkGuess() {
         if(guessedLetters[i] === '_') {
             isComplete = false;
         } else {
-            if(!gameOver) {
+            if(timeLeft > 0) {
                 isComplete = true;
+                // clearInterval(timeInterval);
+                // gameOver = true;
             }
         }
     }
 }
+
+// game should only start after pressing the start button
+// while guessLetters is not complete
+// if we press a letter
+// if the letter is part of the word
+//      it replaces the underscore with a letter
+//      
